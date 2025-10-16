@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'game-events',
+  selector: 'journey-progress',
   standalone: true,
   imports: [],
   styles: [],
-  templateUrl: './GameEvents.html',
+  templateUrl: './journey-progress.html',
 })
-export class GameEvents {}
+export class JourneyProgress {}

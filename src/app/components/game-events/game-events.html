@@ -1,0 +1,12 @@
+<ul class="ml-12 mb-auto py-4">
+  @for (item of messages$ | async; track item.id){
+  <li
+    class="text-xl mb-2"
+    [class.text-gray-900]="item.type === notificationTypes.neutral"
+    [class.text-red-600]="item.type === notificationTypes.negative"
+    [class.text-green-600]="item.type === notificationTypes.positive"
+  >
+    Day {{ item.day }}: {{ item.message }}
+  </li>
+  }
+</ul>

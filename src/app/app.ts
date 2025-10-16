@@ -1,6 +1,8 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { GameView } from './views/GameView';
+import { StoreModule } from '@ngrx/store';
+
+import { GameView } from './views/game-view';
 
 @Component({
   selector: 'app-root',

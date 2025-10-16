@@ -12,13 +12,13 @@ export const ENEMY_FIREPOWER: number = 5;
 export const ENEMY_GOLD_AVG: number = 50;
 
 export const STATS_TYPES = {
-  crew: 'CREW',
-  day: 'DAY',
-  distance: 'DISTANCE',
-  firepower: 'FIREPOWER',
-  food: 'FOOD',
-  money: 'MONEY',
-  oxen: 'OXEN',
+  day: 'Day',
+  distance: 'Distance',
+  crew: 'Crew',
+  food: 'Food',
+  oxen: 'Oxen',
+  money: 'Money',
+  firepower: 'Firepower',
 };
 
 export const ITEM_TYPE = {

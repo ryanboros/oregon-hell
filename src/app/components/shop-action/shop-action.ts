@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'attack-action',
+  selector: 'shop-action',
   standalone: true,
   imports: [],
   styles: [],
-  templateUrl: './AttackAction.html',
+  templateUrl: './shop-action.html',
 })
-export class AttackAction {}
+export class ShopAction {}
