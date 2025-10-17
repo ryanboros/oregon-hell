@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
-import { NOTIFICATION_TYPE } from '../../lib/constants';
+import { NOTIFICATION_TYPE } from '../../lib/game.constants';
 import { IGameState, IMessage } from '../../store/game.model';
 import { selectMessages } from '../../store/game.selectors';
 

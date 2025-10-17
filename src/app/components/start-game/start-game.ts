@@ -5,6 +5,6 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   styles: [],
-  templateUrl: './StartGame.html',
+  templateUrl: './start-game.html',
 })
 export class StartGame {}

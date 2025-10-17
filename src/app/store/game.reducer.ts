@@ -1,23 +1,28 @@
 import { createReducer, on } from '@ngrx/store';
 
-import { addMessages } from './game.actions';
+import { addMessages, updateStats } from './game.actions';
 import { IGameState } from './game.model';
-import { NOTIFICATION_TYPE } from '../lib/constants';
+import { NOTIFICATION_TYPE } from '../lib/game.constants';
 
 export const initialState: IGameState = {
-  crew: 30,
-  day: 0,
-  distance: 0,
+  currentEvent: '',
+  isGameActive: false,
   messages: [],
-  firepower: 2,
-  food: 80,
-  money: 300,
-  oxen: 2,
+  stats: {
+    crew: 30,
+    day: 0,
+    distance: 0,
+    firepower: 2,
+    food: 80,
+    money: 300,
+    oxen: 2,
+  },
 };
 
 const _gameReducer = createReducer(
   initialState,
-  on(addMessages, (state, { msg }) => ({ ...state, messages: [msg, ...state.messages] }))
+  on(addMessages, (state, { msg }) => ({ ...state, messages: [msg, ...state.messages] })),
+  on(updateStats, (state, { stats }) => ({ ...state, stats: stats }))
 );
 
 export function gameReducer(state: any, action: any) {

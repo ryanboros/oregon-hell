@@ -1,27 +1,9 @@
-@let STATS_TYPES = [ 'day', 'distance', 'crew', 'food', 'oxen', 'money', 'firepower'];
-
 <table class="table-auto w-full m-8">
   <tbody>
-    @for (item of STATS_TYPES; track item) {
+    @for (item of statsTypes; track item;) {
     <tr>
       <td>{{ item | uppercase }}</td>
-      @switch (item) { @case ('day') {
-      <td>{{ day$ | async }}</td>
-      } @case ('distance') {
-      <td>{{ distance$ | async }}</td>
-      } @case ('crew') {
-      <td>{{ crew$ | async }}</td>
-      } @case ('food') {
-      <td>{{ food$ | async }}</td>
-      } @case ('oxen') {
-      <td>{{ oxen$ | async }}</td>
-      } @case ('money') {
-      <td>{{ money$ | async }}</td>
-      } @case ('firepower') {
-      <td>{{ firepower$ | async }}</td>
-      } @default{
-      <td></td>
-      }}
+      <td>{{ (stats$ | async)![item] }}</td>
     </tr>
     }
     <tr>

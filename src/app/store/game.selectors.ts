@@ -1,25 +1,31 @@
 import { createSelector, createFeatureSelector } from '@ngrx/store';
 
 import { IGameState } from './game.model';
-import { FIREPOWER_WEIGHT, FOOD_WEIGHT, WEIGHT_PER_OX, WEIGHT_PER_PERSON } from '../lib/constants';
+import {
+  FINAL_DISTANCE,
+  FIREPOWER_WEIGHT,
+  FOOD_WEIGHT,
+  WEIGHT_PER_OX,
+  WEIGHT_PER_PERSON,
+} from '../lib/game.constants';
 
 export const selectGameState = createFeatureSelector<IGameState>('game');
 
-export const selectCrew = createSelector(selectGameState, (state) => state.crew);
-export const selectDay = createSelector(selectGameState, (state) => state.day);
-export const selectDistance = createSelector(selectGameState, (state) => state.distance);
-export const selectFirepower = createSelector(selectGameState, (state) => state.firepower);
-export const selectFood = createSelector(selectGameState, (state) => state.food);
+export const selectCurrentEvent = createSelector(selectGameState, (state) => state.currentEvent);
+export const selectIsGameActive = createSelector(selectGameState, (state) => state.isGameActive);
 export const selectMessages = createSelector(selectGameState, (state) => state.messages);
-export const selectMoney = createSelector(selectGameState, (state) => state.money);
-export const selectOxen = createSelector(selectGameState, (state) => state.oxen);
+export const selectStats = createSelector(selectGameState, (state) => state.stats);
 
 export const selectCapacity = createSelector(
   selectGameState,
-  (state) => state.oxen * WEIGHT_PER_OX + state.crew * WEIGHT_PER_PERSON
+  (state) => state.stats.oxen * WEIGHT_PER_OX + state.stats.crew * WEIGHT_PER_PERSON
 );
 
 export const selectWeight = createSelector(
   selectGameState,
-  (state) => state.food * FOOD_WEIGHT + state.firepower * FIREPOWER_WEIGHT
+  (state) => state.stats.food * FOOD_WEIGHT + state.stats.firepower * FIREPOWER_WEIGHT
+);
+
+export const selectProgress = createSelector(selectGameState, (state) =>
+  Math.round((state.stats.distance / FINAL_DISTANCE) * 100)
 );

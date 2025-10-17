@@ -1,12 +1,8 @@
 export interface IGameState {
-  crew: number;
-  day: number;
-  distance: number;
-  firepower: number;
-  food: number;
+  currentEvent: string;
+  isGameActive: boolean;
   messages: IMessage[];
-  money: number;
-  oxen: number;
+  stats: IStats;
 }
 
 export interface IMessage {
@@ -14,4 +10,15 @@ export interface IMessage {
   id: string;
   message: string;
   type: string;
+}
+
+export interface IStats {
+  crew: number;
+  day: number;
+  distance: number;
+  firepower: number;
+  food: number;
+  money: number;
+  oxen: number;
+  [key: string]: number;
 }

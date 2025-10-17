@@ -3,20 +3,20 @@ import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 
-import { IGameState } from '../../store/game.model';
-import { selectProgress } from '../../store/game.selectors';
+import { IGameState, IStats } from '../../store/game.model';
+import { selectStats } from '../../store/game.selectors';
 
 @Component({
-  selector: 'journey-progress',
+  selector: 'game-calendar',
   standalone: true,
   imports: [CommonModule],
   styles: [],
-  templateUrl: './journey-progress.html',
+  templateUrl: './game-calendar.html',
 })
-export class JourneyProgress {
-  progress$: Observable<number>;
+export class GameCalendar {
+  stats$: Observable<IStats>;
 
   constructor(private store: Store<{ game: IGameState }>) {
-    this.progress$ = this.store.select(selectProgress);
+    this.stats$ = this.store.select(selectStats);
   }
 }
