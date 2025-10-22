@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, output } from '@angular/core';
 
 @Component({
   selector: 'start-game',
@@ -7,4 +7,14 @@ import { Component } from '@angular/core';
   styles: [],
   templateUrl: './start-game.html',
 })
-export class StartGame {}
+export class StartGame {
+  constructor(private elementRef: ElementRef) {}
+
+  emitStartGame(): void {
+    const event: CustomEvent = new CustomEvent('onStartGame', {
+      bubbles: true,
+    });
+
+    this.elementRef.nativeElement.dispatchEvent(event);
+  }
+}

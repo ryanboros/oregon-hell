@@ -1,10 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
 
-import { IGameState, IStats } from '../../store/game.model';
-import { selectStats } from '../../store/game.selectors';
+import { GameStore } from '../../store/game.store';
 
 @Component({
   selector: 'game-calendar',
@@ -14,9 +11,5 @@ import { selectStats } from '../../store/game.selectors';
   templateUrl: './game-calendar.html',
 })
 export class GameCalendar {
-  stats$: Observable<IStats>;
-
-  constructor(private store: Store<{ game: IGameState }>) {
-    this.stats$ = this.store.select(selectStats);
-  }
+  store = inject(GameStore);
 }

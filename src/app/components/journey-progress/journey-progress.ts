@@ -1,10 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
 
-import { IGameState } from '../../store/game.model';
-import { selectProgress } from '../../store/game.selectors';
+import { GameStore } from '../../store/game.store';
 
 @Component({
   selector: 'journey-progress',
@@ -14,9 +11,5 @@ import { selectProgress } from '../../store/game.selectors';
   templateUrl: './journey-progress.html',
 })
 export class JourneyProgress {
-  progress$: Observable<number>;
-
-  constructor(private store: Store<{ game: IGameState }>) {
-    this.progress$ = this.store.select(selectProgress);
-  }
+  store = inject(GameStore);
 }

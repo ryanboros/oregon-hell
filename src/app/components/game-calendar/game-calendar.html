@@ -1,4 +1,4 @@
 <div class="flex justify-center mb-6"><h5 class="font-bold text-xl">DAY</h5></div>
 <div class="bg-[url('/images/calendar.svg')] w-32 h-32 flex items-center justify-end">
-  <h1 class="mt-10 mr-.5 text-5xl tracking-[.45em]">{{ (stats$ | async)!.day }}</h1>
+  <h1 class="mt-10 mr-.5 text-5xl tracking-[.45em]">{{ store.stats().day }}</h1>
 </div>

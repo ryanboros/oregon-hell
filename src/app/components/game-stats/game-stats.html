@@ -3,12 +3,12 @@
     @for (item of statsTypes; track item;) {
     <tr>
       <td>{{ item | uppercase }}</td>
-      <td>{{ (stats$ | async)![item] }}</td>
+      <td>{{ store.stats()[item] }}</td>
     </tr>
     }
     <tr>
       <td>WEIGHT</td>
-      <td>{{ weight$ | async }} / {{ capacity$ | async }}</td>
+      <td>{{ store.weight() }} / {{ store.capacity() }}</td>
     </tr>
   </tbody>
 </table>

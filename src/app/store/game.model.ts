@@ -6,7 +6,7 @@ export interface IGameState {
 }
 
 export interface IMessage {
-  day: number;
+  currentDay: number;
   id: string;
   message: string;
   type: string;

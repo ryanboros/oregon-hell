@@ -1,11 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
 
 import { NOTIFICATION_TYPE } from '../../lib/game.constants';
-import { IGameState, IMessage } from '../../store/game.model';
-import { selectMessages } from '../../store/game.selectors';
+import { GameStore } from '../../store/game.store';
 
 @Component({
   selector: 'game-events',
@@ -15,12 +12,9 @@ import { selectMessages } from '../../store/game.selectors';
   templateUrl: './game-events.html',
 })
 export class GameEvents {
-  messages$: Observable<IMessage[]>;
   get notificationTypes() {
     return NOTIFICATION_TYPE;
   }
 
-  constructor(private store: Store<{ game: IGameState }>) {
-    this.messages$ = this.store.select(selectMessages);
-  }
+  store = inject(GameStore);
 }
