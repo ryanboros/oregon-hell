@@ -3,6 +3,7 @@ export interface IGameState {
   isGameActive: boolean;
   messages: IMessage[];
   stats: IStats;
+  shopInventory: IProduct[];
 }
 
 export interface IMessage {
@@ -21,4 +22,20 @@ export interface IStats {
   money: number;
   oxen: number;
   [key: string]: number;
+}
+
+export interface IEvent {
+  type: string;
+  notification: string;
+  products?: IProduct[];
+  stat?: string;
+  text: string;
+  value?: number;
+}
+
+export interface IProduct {
+  id: string;
+  item: string;
+  price: number;
+  qty: number;
 }

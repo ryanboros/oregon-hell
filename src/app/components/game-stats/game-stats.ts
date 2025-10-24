@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgPipesModule } from 'ngx-pipes';
 
-import { STATS_TYPES } from '../../lib/game.constants';
 import { GameStore } from '../../store/game.store';
 
 @Component({
@@ -13,9 +12,5 @@ import { GameStore } from '../../store/game.store';
   templateUrl: './game-stats.html',
 })
 export class GameStats {
-  get statsTypes() {
-    return Object.keys(STATS_TYPES);
-  }
-
   store = inject(GameStore);
 }

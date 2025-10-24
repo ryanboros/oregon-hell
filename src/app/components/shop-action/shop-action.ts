@@ -1,10 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { GameStore } from '../../store/game.store';
 
 @Component({
   selector: 'shop-action',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   styles: [],
   templateUrl: './shop-action.html',
 })
-export class ShopAction {}
+export class ShopAction {
+  store = inject(GameStore);
+}

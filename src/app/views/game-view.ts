@@ -6,13 +6,15 @@ import { GameStats } from '../components/game-stats/game-stats';
 import { JourneyProgress } from '../components/journey-progress/journey-progress';
 import {
   DAYS_PER_STEP,
+  EVENT_PROBABILITY,
   EVENT_TYPES,
+  EVENTS,
   FINAL_DISTANCE,
   GAME_SPEED,
   NOTIFICATION_TYPE,
 } from '../lib/game.constants';
 import { GameStore } from '../store/game.store';
-import { IMessage, IStats } from '../store/game.model';
+import { IEvent, IMessage, IStats } from '../store/game.model';
 import { consumeFood, updateDistance, updateWeight } from '../lib/game.utils';
 
 @Component({
@@ -31,7 +33,7 @@ export class GameView {
     this.store.setGameActive(true);
 
     const msg: IMessage = {
-      currentDay: this.store.stats().day,
+      currentDay: Math.ceil(this.store.stats().day),
       id: crypto.randomUUID(),
       message: 'A great adventure begins!',
       type: NOTIFICATION_TYPE.positive,
@@ -84,7 +86,7 @@ export class GameView {
       this.store.setEvent(EVENT_TYPES.gameOver);
 
       const starveMsg: IMessage = {
-        currentDay: newDay,
+        currentDay: Math.ceil(newDay),
         id: crypto.randomUUID(),
         message: 'Your caravan starved to death!',
         type: NOTIFICATION_TYPE.negative,
@@ -102,7 +104,8 @@ export class GameView {
       currCapacity,
       currWeight
     );
-    console.log(` weight update -> ${weightUpdate}`);
+    console.log(` weight update -> `);
+    console.log(weightUpdate);
 
     const newDistance = updateDistance(currStats.distance, currCapacity, weightUpdate.weight);
 
@@ -129,7 +132,7 @@ export class GameView {
       this.store.setEvent(EVENT_TYPES.gameOver);
 
       const allDeadMsg = {
-        currentDay: newDay,
+        currentDay: Math.ceil(newDay),
 
         id: crypto.randomUUID(),
         message: 'Everyone has died.',
@@ -146,7 +149,7 @@ export class GameView {
       this.store.setEvent(EVENT_TYPES.win);
 
       const winMsg = {
-        currentDay: newDay,
+        currentDay: Math.ceil(newDay),
         id: crypto.randomUUID(),
         message: 'You made it! Welcome to Oregon.',
         type: NOTIFICATION_TYPE.positive,
@@ -154,6 +157,83 @@ export class GameView {
       this.store.addMessages([winMsg]);
     }
 
-    console.log('random event here');
+    console.log('random event or no?');
+    if (Math.random() <= EVENT_PROBABILITY) {
+      this.generateEvent();
+    }
+  }
+
+  generateEvent() {
+    console.log('-- generateEvent');
+    const currStats: IStats = this.store.stats();
+
+    console.log(' select random event');
+    const eventIndex: number = 9; //Math.floor(Math.random() * EVENTS.length);
+    const eventData: IEvent = EVENTS[eventIndex];
+    console.log(eventData);
+
+    switch (eventData.type) {
+      case 'STAT-CHANGE':
+        console.log(' *statChange Event*');
+        console.log(' update stats');
+        const updateStat = currStats[eventData.stat! as string] + eventData.value!;
+        this.store.updateStats({
+          ...currStats,
+          [eventData.stat! as string]: updateStat,
+        });
+
+        console.log(' notify event');
+        const statMsg: IMessage = {
+          currentDay: Math.ceil(currStats.day),
+          id: crypto.randomUUID(),
+          message: eventData.text,
+          type: eventData.notification,
+        };
+        this.store.addMessages([statMsg]);
+        break;
+      case 'SHOP':
+        console.log(' *shop Event*');
+        // pause game
+        this.store.setGameActive(false);
+
+        // set store inventory
+        this.store.setShopInventory(eventData.products!);
+
+        // show ShopAction
+        this.store.setEvent(EVENT_TYPES.shop);
+
+        console.log(' notify event');
+        const shopMsg: IMessage = {
+          currentDay: Math.ceil(currStats.day),
+          id: crypto.randomUUID(),
+          message: eventData.text,
+          type: eventData.notification,
+        };
+
+        this.store.addMessages([shopMsg]);
+
+        break;
+      case 'ATTACK':
+        console.log(' *attack Event*');
+        // pause game
+        this.store.setGameActive(false);
+
+        // show AttackAction
+        this.store.setEvent(EVENT_TYPES.attack);
+
+        console.log(' notify event');
+        const attackMsg: IMessage = {
+          currentDay: Math.ceil(currStats.day),
+          id: crypto.randomUUID(),
+          message: eventData.text,
+          type: eventData.notification,
+        };
+
+        this.store.addMessages([attackMsg]);
+        break;
+
+      default:
+        return;
+    }
   }
 }

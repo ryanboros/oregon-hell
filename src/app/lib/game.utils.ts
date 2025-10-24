@@ -19,10 +19,6 @@ export const consumeFood = (crew: number, food: number) => {
   return updatedFood;
 };
 
-// export const generateKey = (pre: string) => {
-//   return `${pre}_${new Date().getTime()}`;
-// };
-
 export const updateDistance = (distance: number, capacity: number, weight: number) => {
   const diff = capacity - weight;
   const speed = SLOW_SPEED + (diff / capacity) * FULL_SPEED;

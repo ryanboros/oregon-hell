@@ -12,22 +12,22 @@ export const EVENT_PROBABILITY: number = 0.15;
 export const ENEMY_FIREPOWER: number = 5;
 export const ENEMY_GOLD_AVG: number = 50;
 
-export const STATS_TYPES = {
-  day: 'Day',
-  distance: 'Distance',
-  crew: 'Crew',
-  food: 'Food',
-  oxen: 'Oxen',
-  money: 'Money',
-  firepower: 'Firepower',
-};
+// export const STATS_TYPES = {
+//   day: 'Day',
+//   distance: 'Distance',
+//   crew: 'Crew',
+//   food: 'Food',
+//   oxen: 'Oxen',
+//   money: 'Money',
+//   firepower: 'Firepower',
+// };
 
 export const ITEM_TYPE = {
-  crew: 'CREW',
-  firepower: 'FIREPOWER',
-  food: 'FOOD',
-  money: 'MONEY',
-  oxen: 'OXEN',
+  crew: 'crew',
+  firepower: 'firepower',
+  food: 'food',
+  money: 'money',
+  oxen: 'oxen',
 };
 
 export const EVENT_TYPES = {
@@ -50,66 +50,66 @@ export const EVENTS = [
     notification: NOTIFICATION_TYPE.negative,
     stat: ITEM_TYPE.crew,
     value: -3,
-    text: 'Food intoxication. Casualties: ',
+    text: 'Food intoxication. Casualties: 3',
   },
   {
     type: EVENT_TYPES.statChange,
     notification: NOTIFICATION_TYPE.negative,
     stat: ITEM_TYPE.crew,
     value: -4,
-    text: 'Flu outbreak. Casualties: ',
+    text: 'Flu outbreak. Casualties: 4',
   },
   {
     type: EVENT_TYPES.statChange,
     notification: NOTIFICATION_TYPE.negative,
     stat: ITEM_TYPE.food,
     value: -10,
-    text: 'Worm infestation. Food lost: ',
+    text: 'Worm infestation. Food lost: 10',
   },
   {
     type: EVENT_TYPES.statChange,
     notification: NOTIFICATION_TYPE.negative,
     stat: ITEM_TYPE.money,
     value: -50,
-    text: 'Pick pockets steal $',
+    text: 'Pick pockets steal $50',
   },
   {
     type: EVENT_TYPES.statChange,
     notification: NOTIFICATION_TYPE.negative,
     stat: ITEM_TYPE.oxen,
     value: -1,
-    text: 'Ox flu outbreak. Casualties: ',
+    text: 'Ox flu outbreak. Casualties: 1',
   },
   {
     type: EVENT_TYPES.statChange,
     notification: NOTIFICATION_TYPE.positive,
     stat: ITEM_TYPE.food,
     value: 20,
-    text: 'Found wild berries. Food added: ',
+    text: 'Found wild berries. Food added: 20',
   },
   {
     type: EVENT_TYPES.statChange,
     notification: NOTIFICATION_TYPE.positive,
     stat: ITEM_TYPE.food,
     value: 20,
-    text: 'Found wild berries. Food added: ',
+    text: 'Found wild berries. Food added: 20',
   },
   {
     type: EVENT_TYPES.statChange,
     notification: NOTIFICATION_TYPE.positive,
     stat: ITEM_TYPE.oxen,
     value: 1,
-    text: 'Found wild oxen. New oxen: ',
+    text: 'Found wild oxen. New oxen: 1',
   },
   {
     type: EVENT_TYPES.shop,
     notification: NOTIFICATION_TYPE.neutral,
     text: 'You have found a shop',
     products: [
-      { item: ITEM_TYPE.food, qty: 20, price: 50 },
-      { item: ITEM_TYPE.oxen, qty: 1, price: 200 },
-      { item: ITEM_TYPE.firepower, qty: 2, price: 50 },
-      { item: ITEM_TYPE.crew, qty: 5, price: 80 },
+      { id: 'food-20-50', item: ITEM_TYPE.food, qty: 20, price: 50 },
+      { id: 'oxen-1-200', item: ITEM_TYPE.oxen, qty: 1, price: 200 },
+      { id: 'firepower-2-50', item: ITEM_TYPE.firepower, qty: 2, price: 50 },
+      { id: 'crew-5-80', item: ITEM_TYPE.crew, qty: 5, price: 80 },
     ],
   },
   {
@@ -117,10 +117,10 @@ export const EVENTS = [
     notification: NOTIFICATION_TYPE.neutral,
     text: 'You have found a shop',
     products: [
-      { item: ITEM_TYPE.food, qty: 30, price: 50 },
-      { item: ITEM_TYPE.oxen, qty: 1, price: 200 },
-      { item: ITEM_TYPE.firepower, qty: 2, price: 20 },
-      { item: ITEM_TYPE.crew, qty: 10, price: 80 },
+      { id: 'food-30-50', item: ITEM_TYPE.food, qty: 30, price: 50 },
+      { id: 'oxen-1-200', item: ITEM_TYPE.oxen, qty: 1, price: 200 },
+      { id: 'firepower-2-20', item: ITEM_TYPE.firepower, qty: 2, price: 20 },
+      { id: 'crew-10-80', item: ITEM_TYPE.crew, qty: 10, price: 80 },
     ],
   },
   {
@@ -128,10 +128,10 @@ export const EVENTS = [
     notification: NOTIFICATION_TYPE.neutral,
     text: 'Smugglers sell various goods',
     products: [
-      { item: ITEM_TYPE.food, qty: 20, price: 60 },
-      { item: ITEM_TYPE.oxen, qty: 1, price: 300 },
-      { item: ITEM_TYPE.firepower, qty: 2, price: 80 },
-      { item: ITEM_TYPE.crew, qty: 5, price: 60 },
+      { id: 'food-20-60', item: ITEM_TYPE.food, qty: 20, price: 60 },
+      { id: 'oxen-1-300', item: ITEM_TYPE.oxen, qty: 1, price: 300 },
+      { id: 'firepower-2-80', item: ITEM_TYPE.firepower, qty: 2, price: 80 },
+      { id: 'crew-5-60', item: ITEM_TYPE.crew, qty: 5, price: 60 },
     ],
   },
   {
