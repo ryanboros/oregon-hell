@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgPipesModule } from 'ngx-pipes';
 
 import { STATS_TYPES } from '../../lib/game.constants';
 import { GameStore } from '../../store/game.store';
@@ -7,7 +8,7 @@ import { GameStore } from '../../store/game.store';
 @Component({
   selector: 'game-stats',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgPipesModule],
   styles: [],
   templateUrl: './game-stats.html',
 })

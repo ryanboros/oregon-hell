@@ -36,11 +36,14 @@ export const GameStore = signalStore(
     weight: computed(() => stats().food * FOOD_WEIGHT + stats().firepower * FIREPOWER_WEIGHT),
   })),
   withMethods((store) => ({
-    addMessage(msg: IMessage) {
-      patchState(store, { messages: [msg, ...store.messages()] });
+    addMessages(msg: IMessage[]) {
+      patchState(store, { messages: [...msg, ...store.messages()] });
     },
-    toggleGameActive() {
-      patchState(store, { isGameActive: !store.isGameActive() });
+    setEvent(evt: string) {
+      patchState(store, { currentEvent: evt });
+    },
+    setGameActive(active: boolean) {
+      patchState(store, { isGameActive: active });
     },
     updateStats(stats: IStats) {
       patchState(store, { stats: stats });

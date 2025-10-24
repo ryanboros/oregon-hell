@@ -1,8 +1,9 @@
 export const WEIGHT_PER_OX: number = 20;
 export const WEIGHT_PER_PERSON: number = 2;
 export const FOOD_WEIGHT: number = 0.6;
+export const FOOD_PER_PERSON: number = 0.2;
 export const FIREPOWER_WEIGHT: number = 5;
-export const GAME_SPEED: number = 1500;
+export const GAME_SPEED: number = 3000; //1500;
 export const DAYS_PER_STEP: number = 0.2;
 export const FULL_SPEED: number = 5;
 export const SLOW_SPEED: number = 3;
@@ -31,8 +32,10 @@ export const ITEM_TYPE = {
 
 export const EVENT_TYPES = {
   attack: 'ATTACK',
+  gameOver: 'GAME-OVER',
   shop: 'SHOP',
   statChange: 'STAT-CHANGE',
+  win: 'WIN',
 };
 
 export const NOTIFICATION_TYPE = {

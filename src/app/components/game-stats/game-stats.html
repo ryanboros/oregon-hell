@@ -1,14 +1,36 @@
-<table class="table-auto w-full m-8">
+<table class="table-fixed w-full m-8">
   <tbody>
-    @for (item of statsTypes; track item;) {
     <tr>
-      <td>{{ item | uppercase }}</td>
-      <td>{{ store.stats()[item] }}</td>
+      <td>Day</td>
+      <td>{{ store.stats().day | ceil }}</td>
     </tr>
-    }
     <tr>
-      <td>WEIGHT</td>
-      <td>{{ store.weight() }} / {{ store.capacity() }}</td>
+      <td>Distance</td>
+      <td>{{ store.stats().distance | floor }}</td>
+    </tr>
+    <tr>
+      <td>Crew</td>
+      <td>{{ store.stats().crew }}</td>
+    </tr>
+    <tr>
+      <td>Food</td>
+      <td>{{ store.stats().food | ceil }}</td>
+    </tr>
+    <tr>
+      <td>Oxen</td>
+      <td>{{ store.stats().oxen }}</td>
+    </tr>
+    <tr>
+      <td>Money</td>
+      <td>{{ store.stats().money }}</td>
+    </tr>
+    <tr>
+      <td>Firepower</td>
+      <td>{{ store.stats().firepower }}</td>
+    </tr>
+    <tr>
+      <td>Weight</td>
+      <td>{{ store.weight() | ceil }} / {{ store.capacity() }}</td>
     </tr>
   </tbody>
 </table>

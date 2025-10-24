@@ -14,7 +14,7 @@ import {
   signal,
   untracked,
   ɵɵdefineInjectable
-} from "./chunk-DIHJK275.js";
+} from "./chunk-Z6U7LK3C.js";
 
 // node_modules/@ngrx/signals/fesm2022/ngrx-signals.mjs
 var DEEP_SIGNAL = Symbol("DEEP_SIGNAL");

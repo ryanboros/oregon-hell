@@ -3,6 +3,8 @@
   <start-game *ngIf="store.currentEvent() === ''"></start-game>
   <attack-action *ngIf="store.currentEvent() === 'ATTACK'"></attack-action>
   <shop-action *ngIf="store.currentEvent() === 'SHOP'"></shop-action>
+  <game-over *ngIf="store.currentEvent() === 'GAME-OVER'"></game-over>
+  <game-win *ngIf="store.currentEvent() === 'WIN'"></game-win>
   } @else {
   <game-calendar></game-calendar>
   }
