@@ -7,7 +7,15 @@ import {
   FULL_SPEED,
   NOTIFICATION_TYPE,
   SLOW_SPEED,
+  WEIGHT_PER_OX,
+  WEIGHT_PER_PERSON,
 } from './game.constants';
+
+export const calculateCapacity = (oxen: number, crew: number) =>
+  oxen * WEIGHT_PER_OX + crew * WEIGHT_PER_PERSON;
+
+export const calculateWeight = (food: number, firepower: number) =>
+  food * FOOD_WEIGHT + firepower * FIREPOWER_WEIGHT;
 
 export const consumeFood = (crew: number, food: number) => {
   let updatedFood: number;

@@ -14,8 +14,14 @@ import {
   NOTIFICATION_TYPE,
 } from '../lib/game.constants';
 import { GameStore } from '../store/game.store';
-import { IEvent, IMessage, IStats } from '../store/game.model';
-import { consumeFood, updateDistance, updateWeight } from '../lib/game.utils';
+import { IEvent, IMessage, IProduct, IStats } from '../store/game.model';
+import {
+  calculateCapacity,
+  calculateWeight,
+  consumeFood,
+  updateDistance,
+  updateWeight,
+} from '../lib/game.utils';
 
 @Component({
   selector: 'game-view',
@@ -40,6 +46,75 @@ export class GameView {
     };
     this.store.addMessages([msg]);
     this.step(0);
+  }
+
+  @HostListener('onLeaveShop', ['$event'])
+  handleLeaveShop(event: any) {
+    console.log('leave ths shop');
+    this.store.setGameActive(true);
+    this.store.setEvent('');
+    this.step(0);
+  }
+
+  @HostListener('onPurchaseItem', ['$event'])
+  handlePurchaseItem(event: any) {
+    console.log('buy this item');
+    console.log(event.detail);
+    const product: IProduct = event.detail;
+    const currStats: IStats = this.store.stats();
+    const currCapacity: number = this.store.capacity();
+    const currWeight: number = this.store.weight();
+
+    if (product.price > currStats.money) {
+      const tooExpensiveMsg: IMessage = {
+        currentDay: Math.ceil(currStats.day),
+        id: crypto.randomUUID(),
+        message: 'Not enough money',
+        type: NOTIFICATION_TYPE.negative,
+      };
+      this.store.addMessages([tooExpensiveMsg]);
+
+      return;
+    }
+
+    const newStatMsg = {
+      currentDay: Math.ceil(currStats.day),
+      id: crypto.randomUUID(),
+      message: `Bought ${product.qty} x ${product.item}`,
+      type: NOTIFICATION_TYPE.positive,
+    };
+    this.store.addMessages([newStatMsg]);
+
+    const newMoney = currStats.money - product.price;
+    const newStat = currStats[product.item] + product.qty;
+    const newCapacity = calculateCapacity(
+      product.item === 'oxen' ? newStat : currStats.oxen,
+      product.item === 'crew' ? newStat : currStats.crew
+    );
+    const newWeight = calculateWeight(
+      product.item === 'food' ? newStat : currStats.food,
+      product.item === 'firepower' ? newStat : currStats.firepower
+    );
+
+    // update weight
+    const weightUpdate = updateWeight(
+      currStats.day,
+      product.item === 'firepower' ? newStat : currStats.firepower,
+      product.item === 'food' ? newStat : currStats.food,
+      newCapacity,
+      newWeight
+    );
+    console.log(` weight update -> `);
+    console.log(weightUpdate);
+
+    // update stats
+    this.store.updateStats({
+      ...currStats,
+      money: newMoney,
+      [product.item]: newStat,
+      firepower: weightUpdate.firepower,
+      food: weightUpdate.food,
+    });
   }
 
   step(timestamp: number) {
