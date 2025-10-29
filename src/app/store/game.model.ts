@@ -1,4 +1,5 @@
 export interface IGameState {
+  banditStats: IBanditStats;
   currentEvent: string;
   isGameActive: boolean;
   messages: IMessage[];
@@ -24,9 +25,14 @@ export interface IStats {
   [key: string]: number;
 }
 
+export interface IBanditStats {
+  firepower: number;
+  money: number;
+}
+
 export interface IEvent {
   type: string;
-  notification: string;
+  notification: NotificationType;
   products?: IProduct[];
   stat?: string;
   text: string;
@@ -39,3 +45,9 @@ export interface IProduct {
   price: number;
   qty: number;
 }
+
+export const POSITIVE = 'positive' as const;
+export const NEUTRAL = 'neutral' as const;
+export const NEGATIVE = 'negative' as const;
+
+export type NotificationType = typeof NEGATIVE | typeof NEUTRAL | typeof POSITIVE;

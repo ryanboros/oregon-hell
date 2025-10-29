@@ -1,5 +1,6 @@
-<h5 class="mb-6 text-lg text-center">Fight Going Down!</h5>
+<h5 class="mb-4 text-lg text-center">Bandits attack</h5>
+<p class="mb-6 text-center">Firepower: {{ store.banditStats().firepower! }}</p>
 <div class="flex flex-row justify-evenly w-auto">
-  <button class="btn btn-primary mr-8">Fight</button>
-  <button class="btn">Run Away</button>
+  <button class="btn btn-primary mr-8" (click)="emitFight()">Fight</button>
+  <button class="btn" (click)="emitRunAway()">Run Away</button>
 </div>

@@ -1,7 +1,7 @@
 import { computed, inject, InjectionToken } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
 
-import { IGameState, IMessage, IProduct, IStats } from './game.model';
+import { IBanditStats, IGameState, IMessage, IProduct, IStats } from './game.model';
 import {
   FINAL_DISTANCE,
   FIREPOWER_WEIGHT,
@@ -11,6 +11,10 @@ import {
 } from '../lib/game.constants';
 
 const initialState: IGameState = {
+  banditStats: {
+    firepower: 0,
+    money: 0,
+  },
   currentEvent: '',
   isGameActive: false,
   messages: [],
@@ -39,6 +43,9 @@ export const GameStore = signalStore(
   withMethods((store) => ({
     addMessages(msg: IMessage[]) {
       patchState(store, { messages: [...msg, ...store.messages()] });
+    },
+    setBanditStats(stats: IBanditStats) {
+      patchState(store, { banditStats: stats });
     },
     setEvent(evt: string) {
       patchState(store, { currentEvent: evt });
