@@ -10,27 +10,32 @@
     </tr>
     <tr>
       <td>Crew</td>
-      <td>{{ store.stats().crew }}</td>
+      <td [class.text-red-600]="store.stats().crew <= 10">{{ store.stats().crew }}</td>
     </tr>
     <tr>
       <td>Food</td>
-      <td>{{ store.stats().food | ceil }}</td>
+      <td [class.text-red-600]="store.stats().food <= 15">{{ store.stats().food | ceil }}</td>
     </tr>
     <tr>
       <td>Oxen</td>
-      <td>{{ store.stats().oxen }}</td>
+      <td [class.text-red-600]="store.stats().oxen === 0">{{ store.stats().oxen }}</td>
     </tr>
     <tr>
       <td>Money</td>
-      <td>{{ store.stats().money }}</td>
+      <td [class.text-red-600]="store.stats().money <= 20">{{ store.stats().money }}</td>
     </tr>
     <tr>
       <td>Firepower</td>
-      <td>{{ store.stats().firepower }}</td>
+      <td [class.text-red-600]="store.stats().firepower === 0">{{ store.stats().firepower }}</td>
     </tr>
     <tr>
-      <td>Weight</td>
-      <td>{{ store.weight() | ceil }} / {{ store.capacity() }}</td>
+      <td>Weight / Capcity</td>
+      <td>
+        <span [class.text-red-600]="store.weight() >= store.capacity() - 5">{{
+          store.weight() | ceil
+        }}</span>
+        / {{ store.capacity() }}
+      </td>
     </tr>
   </tbody>
 </table>

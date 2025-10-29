@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -8,4 +8,14 @@ import { CommonModule } from '@angular/common';
   styles: [],
   templateUrl: './game-win.html',
 })
-export class GameWin {}
+export class GameWin {
+  constructor(private elementRef: ElementRef) {}
+
+  emitPlayAgain(): void {
+    const event: CustomEvent = new CustomEvent('onPlayAgain', {
+      bubbles: true,
+    });
+
+    this.elementRef.nativeElement.dispatchEvent(event);
+  }
+}

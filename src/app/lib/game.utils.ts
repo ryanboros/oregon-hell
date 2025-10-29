@@ -1,5 +1,5 @@
 // import { IStats } from '../store/game.model';
-import { IBanditStats, IMessage } from '../store/game.model';
+import { IBanditStats, IMessage, NEGATIVE_MESSAGE, NotificationType } from '../store/game.model';
 import {
   ENEMY_FIREPOWER_AVG,
   ENEMY_GOLD_AVG,
@@ -37,15 +37,11 @@ export const generateBanditStats = (): IBanditStats => ({
 export const generateDamage = (firepower: number, banditFirepower: number): number =>
   Math.ceil(Math.max(0, banditFirepower * 2 * Math.random() - firepower));
 
-export const generateMessage = (
-  day: number,
-  msg: string,
-  note: 'positive' | 'neutral' | 'negative'
-): IMessage => ({
+export const generateMessage = (day: number, msg: string, note: NotificationType): IMessage => ({
   currentDay: Math.ceil(day),
   id: crypto.randomUUID(),
   message: msg,
-  type: NOTIFICATION_TYPE[note],
+  type: note,
 });
 
 export const updateDistance = (distance: number, capacity: number, weight: number): number => {
@@ -82,12 +78,12 @@ export const updateWeight = (
 
   // add notification if guns dropped
   if (droppedGuns > 0) {
-    newMessages.push({
-      id: crypto.randomUUID(),
-      currentDay: day,
-      message: `Left ${droppedGuns} guns behind`,
-      type: NOTIFICATION_TYPE.negative,
-    });
+    const droppedGunMsg: IMessage = generateMessage(
+      day,
+      `Left ${droppedGuns} guns behind.`,
+      NEGATIVE_MESSAGE
+    );
+    newMessages.unshift(droppedGunMsg);
   }
 
   // check drop food
@@ -99,12 +95,12 @@ export const updateWeight = (
 
   // add notification if food dropped
   if (droppedFood > 0) {
-    newMessages.push({
-      id: crypto.randomUUID(),
-      currentDay: day,
-      message: `Left ${droppedFood} food provisions behind`,
-      type: NOTIFICATION_TYPE.negative,
-    });
+    const droppedFoodMsg: IMessage = generateMessage(
+      day,
+      `Left ${droppedFood} food provisions behind.`,
+      NEGATIVE_MESSAGE
+    );
+    newMessages.unshift(droppedFoodMsg);
   }
 
   // return updated data

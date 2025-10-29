@@ -15,12 +15,19 @@ import {
 } from '../lib/game.constants';
 import { GameStore } from '../store/game.store';
 import {
+  ATTACK_EVENT,
+  GAME_OVER_EVENT,
+  GOLD_MESSAGE,
   IBanditStats,
   IEvent,
   IMessage,
   IProduct,
   IStats,
+  NEGATIVE_MESSAGE,
   NotificationType,
+  POSITIVE_MESSAGE,
+  SHOP_EVENT,
+  WIN_EVENT,
 } from '../store/game.model';
 import {
   calculateCapacity,
@@ -54,7 +61,7 @@ export class GameView {
     const startMsg: IMessage = generateMessage(
       currStats.day,
       'A great adventure begins!',
-      'positive'
+      POSITIVE_MESSAGE
     );
     this.store.addMessages([startMsg]);
     this.step(0);
@@ -83,7 +90,7 @@ export class GameView {
       const tooExpensiveMsg: IMessage = generateMessage(
         currStats.day,
         'Not enough money.',
-        'negative'
+        NEGATIVE_MESSAGE
       );
       this.store.addMessages([tooExpensiveMsg]);
 
@@ -93,7 +100,7 @@ export class GameView {
     const newStatMsg = {
       currentDay: Math.ceil(currStats.day),
       id: crypto.randomUUID(),
-      message: `Bought ${product.qty} x ${product.item}`,
+      message: `Bought ${product.qty} x ${product.item}.`,
       type: NOTIFICATION_TYPE.positive,
     };
     this.store.addMessages([newStatMsg]);
@@ -153,12 +160,12 @@ export class GameView {
       const damageMsg: IMessage = generateMessage(
         currStats.day,
         `${damage} people were killed fighting.`,
-        'negative'
+        NEGATIVE_MESSAGE
       );
       const foundMsg: IMessage = generateMessage(
         currStats.day,
         `Found ${banditStats.money} gold.`,
-        'positive'
+        GOLD_MESSAGE
       );
       this.store.addMessages([foundMsg, damageMsg]);
 
@@ -176,11 +183,11 @@ export class GameView {
       const allKilledMsg: IMessage = generateMessage(
         currStats.day,
         'Everybody died in the fight.',
-        'negative'
+        NEGATIVE_MESSAGE
       );
       this.store.addMessages([allKilledMsg]);
 
-      this.store.setEvent(EVENT_TYPES.gameOver);
+      this.store.setEvent(GAME_OVER_EVENT);
     }
   }
 
@@ -206,7 +213,7 @@ export class GameView {
       const damageMsg: IMessage = generateMessage(
         currStats.day,
         `${damage} people were killed running away.`,
-        'negative'
+        NEGATIVE_MESSAGE
       );
       this.store.addMessages([damageMsg]);
 
@@ -224,12 +231,33 @@ export class GameView {
       const allKilledMsg: IMessage = generateMessage(
         currStats.day,
         'Everybody died in the running away.',
-        'negative'
+        NEGATIVE_MESSAGE
       );
       this.store.addMessages([allKilledMsg]);
 
-      this.store.setEvent(EVENT_TYPES.gameOver);
+      this.store.setEvent(GAME_OVER_EVENT);
     }
+  }
+
+  /* onPlayAgain */
+  @HostListener('onPlayAgain', ['$event'])
+  handlePlayAgain(event: any) {
+    // reset stats
+    this.store.updateStats({
+      crew: 30,
+      day: 0,
+      distance: 0,
+      firepower: 2,
+      food: 80,
+      money: 300,
+      oxen: 2,
+    });
+
+    // clear messages
+    this.store.clearMessages();
+
+    // clear event
+    this.store.setEvent('');
   }
 
   /* step */
@@ -275,9 +303,9 @@ export class GameView {
     if (newFood === 0) {
       console.log(' food is gone, everyone starves - Game Over');
       this.store.setGameActive(false);
-      this.store.setEvent(EVENT_TYPES.gameOver);
+      this.store.setEvent(GAME_OVER_EVENT);
 
-      const starveMsg = generateMessage(newDay, 'Your caravan starved to death.', 'negative');
+      const starveMsg = generateMessage(newDay, 'Your caravan starved to death.', NEGATIVE_MESSAGE);
       this.store.addMessages([starveMsg]);
 
       return;
@@ -316,9 +344,9 @@ export class GameView {
       console.log(' crew is all dead - Game Over');
 
       this.store.setGameActive(false);
-      this.store.setEvent(EVENT_TYPES.gameOver);
+      this.store.setEvent(GAME_OVER_EVENT);
 
-      const allDeadMsg: IMessage = generateMessage(newDay, 'Everyone has died.', 'negative');
+      const allDeadMsg: IMessage = generateMessage(newDay, 'Everyone has died.', NEGATIVE_MESSAGE);
       this.store.addMessages([allDeadMsg]);
     }
 
@@ -327,12 +355,12 @@ export class GameView {
       console.log(' hard to believe we made it - Win');
 
       this.store.setGameActive(false);
-      this.store.setEvent(EVENT_TYPES.win);
+      this.store.setEvent(WIN_EVENT);
 
       const winMsg: IMessage = generateMessage(
         newDay,
         'You made it! Welcome to Oregon.',
-        'positive'
+        POSITIVE_MESSAGE
       );
       this.store.addMessages([winMsg]);
     }
@@ -367,7 +395,7 @@ export class GameView {
         const statMsg: IMessage = generateMessage(
           currStats.day,
           eventData.text,
-          eventData.notification as NotificationType
+          eventData.notification
         );
         this.store.addMessages([statMsg]);
         break;
@@ -380,7 +408,7 @@ export class GameView {
         this.store.setShopInventory(eventData.products!);
 
         // show ShopAction
-        this.store.setEvent(EVENT_TYPES.shop);
+        this.store.setEvent(SHOP_EVENT);
 
         console.log(' notify event');
         const shopMsg: IMessage = generateMessage(
@@ -401,7 +429,7 @@ export class GameView {
         this.store.setBanditStats(banditStats);
 
         // show AttackAction
-        this.store.setEvent(EVENT_TYPES.attack);
+        this.store.setEvent(ATTACK_EVENT);
 
         console.log(' notify event');
         const attackMsg: IMessage = generateMessage(

@@ -2,9 +2,10 @@
   @for (item of store.messages(); track item.id){
   <li
     class="text-xl mb-2"
-    [class.text-gray-900]="item.type === notificationTypes.neutral"
+    [class.text-slate-400]="item.type === notificationTypes.neutral"
     [class.text-red-600]="item.type === notificationTypes.negative"
-    [class.text-green-600]="item.type === notificationTypes.positive"
+    [class.text-emerald-600]="item.type === notificationTypes.positive"
+    [class.text-yellow-600]="item.type === notificationTypes.gold"
   >
     Day {{ item.currentDay }}: {{ item.message }}
   </li>

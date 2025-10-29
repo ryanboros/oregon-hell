@@ -3,7 +3,7 @@
   @for ( item of store.shopInventory(); track item.id ) {
   <button class="btn" (click)="emitPurchaseItem(item)">
     <div>{{ item.item | uppercase }}</div>
-    <div class="text-green-600">{{ item.qty }} - ${{ item.price }}</div>
+    <div class="text-emerald-600">{{ item.qty }} - ${{ item.price }}</div>
   </button>
   }
 </div>
