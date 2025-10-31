@@ -16,6 +16,7 @@ import {
 import { GameStore } from '../store/game.store';
 import {
   ATTACK_EVENT,
+  DEATH_MESSAGE,
   GAME_OVER_EVENT,
   GOLD_MESSAGE,
   IBanditStats,
@@ -23,6 +24,7 @@ import {
   IMessage,
   IProduct,
   IStats,
+  MONEY_ITEM,
   NEGATIVE_MESSAGE,
   NotificationType,
   POSITIVE_MESSAGE,
@@ -36,6 +38,8 @@ import {
   generateBanditStats,
   generateDamage,
   generateMessage,
+  generateStore,
+  randomInt,
   updateDistance,
   updateWeight,
 } from '../lib/game.utils';
@@ -51,45 +55,46 @@ export class GameView {
   store = inject(GameStore);
   previousTime: number = 0;
 
-  /* onStartGame */
+  /* onStartGame click handler */
   @HostListener('onStartGame', ['$event'])
   handleStartGame(event: any) {
     const currStats: IStats = this.store.stats();
 
-    this.store.setGameActive(true);
-
-    const startMsg: IMessage = generateMessage(
-      currStats.day,
-      'A great adventure begins!',
-      POSITIVE_MESSAGE
-    );
+    // start game message
+    const startMsg: IMessage = generateMessage(1, 'A great adventure begins!', POSITIVE_MESSAGE);
     this.store.addMessages([startMsg]);
+
+    // start game
+    this.store.setGameActive(true);
+    // game loop
     this.step(0);
   }
 
-  /* onLeaveShop */
+  /* onLeaveShop click handler */
   @HostListener('onLeaveShop', ['$event'])
   handleLeaveShop(event: any) {
-    console.log('leave ths shop');
-    this.store.setGameActive(true);
+    // clear event
     this.store.setEvent('');
+    // resume game
+    this.store.setGameActive(true);
+    // game loop
     this.step(0);
   }
 
-  /* onPurchaseItem */
+  /* onPurchaseItem click handler */
   @HostListener('onPurchaseItem', ['$event'])
   handlePurchaseItem(event: any) {
-    console.log('buy this item');
-    console.log(event.detail);
-    const product: IProduct = event.detail;
     const currStats: IStats = this.store.stats();
     const currCapacity: number = this.store.capacity();
     const currWeight: number = this.store.weight();
+    const product: IProduct = event.detail;
 
+    // check if money available
     if (product.price > currStats.money) {
+      // not enough money message
       const tooExpensiveMsg: IMessage = generateMessage(
         currStats.day,
-        'Not enough money.',
+        'Not enough money',
         NEGATIVE_MESSAGE
       );
       this.store.addMessages([tooExpensiveMsg]);
@@ -97,27 +102,31 @@ export class GameView {
       return;
     }
 
-    const newStatMsg = {
-      currentDay: Math.ceil(currStats.day),
-      id: crypto.randomUUID(),
-      message: `Bought ${product.qty} x ${product.item}.`,
-      type: NOTIFICATION_TYPE.positive,
-    };
+    // puchased item message
+    const newStatMsg: IMessage = generateMessage(
+      currStats.day,
+      `Bought: ${product.qty}x ${product.item}`,
+      POSITIVE_MESSAGE
+    );
     this.store.addMessages([newStatMsg]);
 
-    // update the stat
+    // update the money and stats affected by purchase
     const newMoney = currStats.money - product.price;
     const newStat = currStats[product.item] + product.qty;
+
+    // oxen and crew affect capacity, recalculate capacity if necessary
     const newCapacity = calculateCapacity(
       product.item === 'oxen' ? newStat : currStats.oxen,
       product.item === 'crew' ? newStat : currStats.crew
     );
+
+    // food and firepower affect weight, recalculate weight if necessary
     const newWeight = calculateWeight(
       product.item === 'food' ? newStat : currStats.food,
       product.item === 'firepower' ? newStat : currStats.firepower
     );
 
-    // update weight
+    // update weight, discard if purchase goes above available weight
     const weightUpdate = updateWeight(
       currStats.day,
       product.item === 'firepower' ? newStat : currStats.firepower,
@@ -125,8 +134,6 @@ export class GameView {
       newCapacity,
       newWeight
     );
-    console.log(` weight update -> `);
-    console.log(weightUpdate);
 
     // update stats
     this.store.updateStats({
@@ -138,33 +145,36 @@ export class GameView {
     });
   }
 
-  /* onFight */
+  /* onFight click handler */
   @HostListener('onFight', ['$event'])
   handleFight(event: any) {
-    console.log('fight!');
     const currStats: IStats = this.store.stats();
     const banditStats: IBanditStats = this.store.banditStats();
 
+    // calculate damage done by bandits
     const damage: number = generateDamage(currStats.firepower, banditStats.firepower);
-    console.log(`damage -> ${damage}`);
 
     // check for survivors
     if (damage < currStats.crew) {
-      console.log(' there are survivors');
+      // there are survivors
       const newCrew = currStats.crew - damage;
       const newMoney = currStats.money + banditStats.money;
-      console.log(` update stats -> crew : ${newCrew}, money: ${newMoney}`);
 
+      // update stats - money & crew
       this.store.updateStats({ ...currStats, crew: newCrew, money: newMoney });
 
+      // battle casualties message
       const damageMsg: IMessage = generateMessage(
         currStats.day,
-        `${damage} people were killed fighting.`,
-        NEGATIVE_MESSAGE
+        damage === 0 ? 'No one was killed in the fight' : `${damage} people were killed fighting`,
+        damage === 0 ? POSITIVE_MESSAGE : NEGATIVE_MESSAGE
       );
+
+      // when you defeat bandits, you get their gold
+      // gold found message
       const foundMsg: IMessage = generateMessage(
         currStats.day,
-        `Found ${banditStats.money} gold.`,
+        `Found ${banditStats.money} gold`,
         GOLD_MESSAGE
       );
       this.store.addMessages([foundMsg, damageMsg]);
@@ -174,45 +184,48 @@ export class GameView {
       this.store.setEvent('');
       // restart game
       this.store.setGameActive(true);
+      // game loop
       this.step(0);
     } else {
-      console.log(' there are no survivors');
+      // no survivors, game over
 
+      // update stats - no crew remaining
       this.store.updateStats({ ...currStats, crew: 0 });
 
+      // all were killed in battle message
       const allKilledMsg: IMessage = generateMessage(
         currStats.day,
-        'Everybody died in the fight.',
-        NEGATIVE_MESSAGE
+        'Everybody died in the fight',
+        DEATH_MESSAGE
       );
       this.store.addMessages([allKilledMsg]);
 
+      // display Game Over
       this.store.setEvent(GAME_OVER_EVENT);
     }
   }
 
-  /* onRunAway */
+  /* onRunAway click handler */
   @HostListener('onRunAway', ['$event'])
   handleRunAway(event: any) {
-    console.log('run away!');
-    const currStats: IStats = this.store.stats();
     const banditStats: IBanditStats = this.store.banditStats();
+    const currStats: IStats = this.store.stats();
 
+    // calculate damage done by bandits
     const damage: number = generateDamage(currStats.firepower, banditStats.firepower);
-    console.log(`damage -> ${damage}`);
 
     // check for survivors
     if (damage < currStats.crew) {
-      console.log(' there are survivors');
+      // there are survivors
       const newCrew = currStats.crew - damage;
 
-      console.log(` update stats -> crew : ${newCrew}`);
-
+      // update stats - crew
       this.store.updateStats({ ...currStats, crew: newCrew });
 
+      // fleeing casualties message
       const damageMsg: IMessage = generateMessage(
         currStats.day,
-        `${damage} people were killed running away.`,
+        `${damage} people were killed running away`,
         NEGATIVE_MESSAGE
       );
       this.store.addMessages([damageMsg]);
@@ -222,24 +235,28 @@ export class GameView {
       this.store.setEvent('');
       // restart game
       this.store.setGameActive(true);
+      // game loop
       this.step(0);
     } else {
-      console.log(' there are no survivors.');
+      // no survivors, game over
 
+      // update stats - no crew remaining
       this.store.updateStats({ ...currStats, crew: 0 });
 
+      // all were killed fleeing message
       const allKilledMsg: IMessage = generateMessage(
         currStats.day,
-        'Everybody died in the running away.',
-        NEGATIVE_MESSAGE
+        'Everybody died in the running away',
+        DEATH_MESSAGE
       );
       this.store.addMessages([allKilledMsg]);
 
+      // display Game Over
       this.store.setEvent(GAME_OVER_EVENT);
     }
   }
 
-  /* onPlayAgain */
+  /* onPlayAgain click handler */
   @HostListener('onPlayAgain', ['$event'])
   handlePlayAgain(event: any) {
     // reset stats
@@ -256,11 +273,11 @@ export class GameView {
     // clear messages
     this.store.clearMessages();
 
-    // clear event
+    // clear event - shows Start Game
     this.store.setEvent('');
   }
 
-  /* step */
+  /* step, the game loop */
   step(timestamp: number) {
     //starting, setup the previous time for the first time
     if (!this.previousTime) {
@@ -283,30 +300,29 @@ export class GameView {
 
   /* updateGame */
   updateGame() {
-    console.log('--updateGame');
     const currStats: IStats = this.store.stats();
     const currCapacity: number = this.store.capacity();
     const currWeight: number = this.store.weight();
 
     // update day
     const newDay: number = currStats.day + DAYS_PER_STEP;
-    console.log(` new day -> ${newDay}`);
 
-    // eat up
+    // cararvan consumes food
     const newFood: number = consumeFood(currStats.crew, currStats.food);
-    console.log(` new food -> ${newFood}`);
 
-    // update stats
+    // update stats - day & food
     this.store.updateStats({ ...currStats, day: newDay, food: newFood });
 
     // if all the food is gone, starvation & game over
     if (newFood === 0) {
-      console.log(' food is gone, everyone starves - Game Over');
-      this.store.setGameActive(false);
-      this.store.setEvent(GAME_OVER_EVENT);
-
-      const starveMsg = generateMessage(newDay, 'Your caravan starved to death.', NEGATIVE_MESSAGE);
+      // caravan starved message
+      const starveMsg = generateMessage(newDay, 'Your caravan starved to death', DEATH_MESSAGE);
       this.store.addMessages([starveMsg]);
+
+      // stop game
+      this.store.setGameActive(false);
+      // set Game Over event
+      this.store.setEvent(GAME_OVER_EVENT);
 
       return;
     }
@@ -319,18 +335,14 @@ export class GameView {
       currCapacity,
       currWeight
     );
-    console.log(` weight update -> `);
-    console.log(weightUpdate);
 
-    const newDistance = updateDistance(currStats.distance, currCapacity, weightUpdate.weight);
-
-    console.log(` distance update -> ${newDistance}`);
-
-    console.log(' update messages & stats');
-    // if messages, add messages
+    // if messages added in updating weight (dropping items), add messages
     if (weightUpdate.messages.length > 0) this.store.addMessages(weightUpdate.messages);
 
-    // update stats
+    // update distance
+    const newDistance = updateDistance(currStats.distance, currCapacity, weightUpdate.weight);
+
+    // update stats - distance, firepower, food
     this.store.updateStats({
       ...currStats,
       day: newDay,
@@ -341,76 +353,80 @@ export class GameView {
 
     // if all are dead, everyone died & game over
     if (currStats.crew <= 0) {
-      console.log(' crew is all dead - Game Over');
-
-      this.store.setGameActive(false);
-      this.store.setEvent(GAME_OVER_EVENT);
-
-      const allDeadMsg: IMessage = generateMessage(newDay, 'Everyone has died.', NEGATIVE_MESSAGE);
+      // all crew has died message
+      const allDeadMsg: IMessage = generateMessage(newDay, 'Everyone has died', DEATH_MESSAGE);
       this.store.addMessages([allDeadMsg]);
+
+      // stop game
+      this.store.setGameActive(false);
+      // set Game Over event
+      this.store.setEvent(GAME_OVER_EVENT);
     }
 
-    // if you've made it, you've won
+    // check distance to see if caravan has reached the destination
     if (newDistance >= FINAL_DISTANCE) {
-      console.log(' hard to believe we made it - Win');
-
-      this.store.setGameActive(false);
-      this.store.setEvent(WIN_EVENT);
-
+      // you win message
       const winMsg: IMessage = generateMessage(
         newDay,
-        'You made it! Welcome to Oregon.',
+        'You have reached your destination. Welcome to Oregon!',
         POSITIVE_MESSAGE
       );
       this.store.addMessages([winMsg]);
+
+      // stop game
+      this.store.setGameActive(false);
+      // set Game Win event
+      this.store.setEvent(WIN_EVENT);
     }
 
-    console.log('random event or no?');
+    // if random number within EVENT_PROBABILITY, generate an event
     if (Math.random() <= EVENT_PROBABILITY) {
+      // generate event -> statsChange, shop, or attack
       this.generateEvent();
     }
   }
 
   /* generateEvent */
   generateEvent() {
-    console.log('-- generateEvent');
     const currStats: IStats = this.store.stats();
 
-    console.log(' select random event');
-    const eventIndex: number = Math.floor(Math.random() * EVENTS.length);
+    // generate random event
+    const eventIndex: number = randomInt(EVENTS.length);
     const eventData: IEvent = EVENTS[eventIndex];
-    console.log(eventData);
 
     switch (eventData.type) {
       case 'STAT-CHANGE':
-        console.log(' *statChange Event*');
-        console.log(' update stats');
-        const updateStat = currStats[eventData.stat! as string] + eventData.value!;
-        this.store.updateStats({
-          ...currStats,
-          [eventData.stat! as string]: updateStat,
-        });
+        // STAT-CHANGE event
 
-        console.log(' notify event');
-        const statMsg: IMessage = generateMessage(
-          currStats.day,
-          eventData.text,
-          eventData.notification
-        );
-        this.store.addMessages([statMsg]);
+        // update stats
+        const updateStat = currStats[eventData.stat! as string] + eventData.value!;
+        if (updateStat >= 0) {
+          // if result is > 0, update valid
+
+          // update stats
+          this.store.updateStats({
+            ...currStats,
+            [eventData.stat! as string]: updateStat,
+          });
+
+          // stat updated message
+          const statMsg: IMessage = generateMessage(
+            currStats.day,
+            `${eventData.text} ${eventData.stat === MONEY_ITEM ? '$' : ''}${Math.abs(
+              eventData.value!
+            )}`,
+            eventData.notification
+          );
+          this.store.addMessages([statMsg]);
+        }
         break;
       case 'SHOP':
-        console.log(' *shop Event*');
+        // SHOP event
+
         // pause game
         this.store.setGameActive(false);
 
-        // set store inventory
-        this.store.setShopInventory(eventData.products!);
-
-        // show ShopAction
-        this.store.setEvent(SHOP_EVENT);
-
-        console.log(' notify event');
+        // shop event message
         const shopMsg: IMessage = generateMessage(
           currStats.day,
           eventData.text,
@@ -418,20 +434,20 @@ export class GameView {
         );
         this.store.addMessages([shopMsg]);
 
+        // set store inventory from randomize eventData
+        const inventory: IProduct[] = generateStore(eventData.products!);
+        this.store.setShopInventory(inventory);
+
+        // show ShopAction
+        this.store.setEvent(SHOP_EVENT);
         break;
       case 'ATTACK':
-        console.log(' *attack Event*');
+        // ATTACK event
+
         // pause game
         this.store.setGameActive(false);
 
-        // set bandit stats
-        const banditStats: IBanditStats = generateBanditStats();
-        this.store.setBanditStats(banditStats);
-
-        // show AttackAction
-        this.store.setEvent(ATTACK_EVENT);
-
-        console.log(' notify event');
+        // attack message
         const attackMsg: IMessage = generateMessage(
           currStats.day,
           eventData.text,
@@ -439,8 +455,14 @@ export class GameView {
         );
 
         this.store.addMessages([attackMsg]);
-        break;
 
+        // set bandit stats
+        const banditStats: IBanditStats = generateBanditStats();
+        this.store.setBanditStats(banditStats);
+
+        // show AttackAction
+        this.store.setEvent(ATTACK_EVENT);
+        break;
       default:
         return;
     }

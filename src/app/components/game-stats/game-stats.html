@@ -1,35 +1,35 @@
 <table class="table-fixed w-full m-8">
   <tbody>
     <tr>
-      <td>Day</td>
+      <td>DAY</td>
       <td>{{ store.stats().day | ceil }}</td>
     </tr>
     <tr>
-      <td>Distance</td>
+      <td>DISTANCE</td>
       <td>{{ store.stats().distance | floor }}</td>
     </tr>
     <tr>
-      <td>Crew</td>
+      <td>CREW</td>
       <td [class.text-red-600]="store.stats().crew <= 10">{{ store.stats().crew }}</td>
     </tr>
     <tr>
-      <td>Food</td>
+      <td>FOOD</td>
       <td [class.text-red-600]="store.stats().food <= 15">{{ store.stats().food | ceil }}</td>
     </tr>
     <tr>
-      <td>Oxen</td>
+      <td>OXEN</td>
       <td [class.text-red-600]="store.stats().oxen === 0">{{ store.stats().oxen }}</td>
     </tr>
     <tr>
-      <td>Money</td>
+      <td>MONEY</td>
       <td [class.text-red-600]="store.stats().money <= 20">{{ store.stats().money }}</td>
     </tr>
     <tr>
-      <td>Firepower</td>
+      <td>FIREPOWER</td>
       <td [class.text-red-600]="store.stats().firepower === 0">{{ store.stats().firepower }}</td>
     </tr>
     <tr>
-      <td>Weight / Capcity</td>
+      <td>WEIGHT / CAPACITY</td>
       <td>
         <span [class.text-red-600]="store.weight() >= store.capacity() - 5">{{
           store.weight() | ceil

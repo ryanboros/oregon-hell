@@ -1,5 +1,10 @@
-// import { IStats } from '../store/game.model';
-import { IBanditStats, IMessage, NEGATIVE_MESSAGE, NotificationType } from '../store/game.model';
+import {
+  IBanditStats,
+  IMessage,
+  IProduct,
+  NEGATIVE_MESSAGE,
+  NotificationType,
+} from '../store/game.model';
 import {
   ENEMY_FIREPOWER_AVG,
   ENEMY_GOLD_AVG,
@@ -44,6 +49,31 @@ export const generateMessage = (day: number, msg: string, note: NotificationType
   type: note,
 });
 
+export const generateStore = (products: IProduct[]): IProduct[] => {
+  // number of products in store
+  const numProducts: number = Math.ceil(Math.random() * 4);
+
+  let inventory: IProduct[] = [];
+
+  for (let i = 0; i < numProducts; i++) {
+    // random product
+    const productIndex = randomInt(products.length);
+
+    // multiply price by random factor +-30%;
+    const priceFactor = 0.7 + 0.6 * Math.random();
+
+    inventory.push({
+      ...products[productIndex],
+      id: crypto.randomUUID(),
+      price: Math.round(products[productIndex].price * priceFactor),
+    });
+  }
+
+  return inventory;
+};
+
+export const randomInt = (max: number): number => Math.floor(Math.random() * max);
+
 export const updateDistance = (distance: number, capacity: number, weight: number): number => {
   const diff = capacity - weight;
   const speed = SLOW_SPEED + (diff / capacity) * FULL_SPEED;
@@ -80,7 +110,7 @@ export const updateWeight = (
   if (droppedGuns > 0) {
     const droppedGunMsg: IMessage = generateMessage(
       day,
-      `Left ${droppedGuns} guns behind.`,
+      `Left ${droppedGuns} guns behind`,
       NEGATIVE_MESSAGE
     );
     newMessages.unshift(droppedGunMsg);
@@ -97,7 +127,7 @@ export const updateWeight = (
   if (droppedFood > 0) {
     const droppedFoodMsg: IMessage = generateMessage(
       day,
-      `Left ${droppedFood} food provisions behind.`,
+      `Left ${droppedFood} food provisions behind`,
       NEGATIVE_MESSAGE
     );
     newMessages.unshift(droppedFoodMsg);

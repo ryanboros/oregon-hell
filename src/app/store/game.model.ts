@@ -40,7 +40,7 @@ export interface IEvent {
 }
 
 export interface IProduct {
-  id: string;
+  id?: string;
   item: ItemType;
   price: number;
   qty: number;
@@ -73,13 +73,15 @@ export type ItemType =
   | typeof MONEY_ITEM
   | typeof OXEN_ITEM;
 
-export const POSITIVE_MESSAGE = 'POSITIVE' as const;
+export const DEATH_MESSAGE = 'DEATH' as const;
+export const GOLD_MESSAGE = 'GOLD' as const;
 export const NEUTRAL_MESSAGE = 'NEUTRAL' as const;
 export const NEGATIVE_MESSAGE = 'NEGATIVE' as const;
-export const GOLD_MESSAGE = 'GOLD' as const;
+export const POSITIVE_MESSAGE = 'POSITIVE' as const;
 
 export type NotificationType =
+  | typeof DEATH_MESSAGE
+  | typeof GOLD_MESSAGE
   | typeof NEGATIVE_MESSAGE
   | typeof NEUTRAL_MESSAGE
-  | typeof POSITIVE_MESSAGE
-  | typeof GOLD_MESSAGE;
+  | typeof POSITIVE_MESSAGE;
