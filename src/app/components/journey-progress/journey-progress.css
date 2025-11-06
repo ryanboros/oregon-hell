@@ -12,3 +12,13 @@ input[type="range"]::-webkit-slider-thumb {
   height: 70px;
   width: 70px;
 }
+
+input[type=range]::-moz-range-thumb {
+  appearance: none;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  background: url('/images/wagon.svg');
+  height: 70px;
+  width: 70px;
+}
