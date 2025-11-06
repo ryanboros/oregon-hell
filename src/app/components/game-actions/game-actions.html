@@ -1,11 +1,14 @@
 <div class="flex flex-col w-full h-full items-center justify-center">
   @if (!store.isGameActive()) {
-  <start-game *ngIf="store.currentEvent() === ''"></start-game>
-  <attack-action *ngIf="store.currentEvent() === 'ATTACK'"></attack-action>
-  <shop-action *ngIf="store.currentEvent() === 'SHOP'"></shop-action>
-  <game-over *ngIf="store.currentEvent() === 'GAME-OVER'"></game-over>
-  <game-win *ngIf="store.currentEvent() === 'WIN'"></game-win>
+  <start-game data-testid="start-game" *ngIf="store.currentEvent() === ''"></start-game>
+  <attack-action
+    data-testid="attack-action"
+    *ngIf="store.currentEvent() === 'ATTACK'"
+  ></attack-action>
+  <shop-action data-testid="shop-action" *ngIf="store.currentEvent() === 'SHOP'"></shop-action>
+  <game-over data-testid="game-over" *ngIf="store.currentEvent() === 'GAME-OVER'"></game-over>
+  <game-win data-testid="game-win" *ngIf="store.currentEvent() === 'WIN'"></game-win>
   } @else {
-  <game-calendar></game-calendar>
+  <game-calendar data-testid="game-calendar"></game-calendar>
   }
 </div>

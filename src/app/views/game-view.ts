@@ -10,6 +10,8 @@ import {
   EVENT_TYPES,
   EVENTS,
   FINAL_DISTANCE,
+  FIREPOWER_WEIGHT,
+  FOOD_WEIGHT,
   GAME_SPEED,
   NOTIFICATION_TYPE,
 } from '../lib/game.constants';
@@ -41,7 +43,7 @@ import {
   generateStore,
   randomInt,
   updateDistance,
-  updateWeight,
+  // updateWeight,
 } from '../lib/game.utils';
 
 @Component({
@@ -102,6 +104,17 @@ export class GameView {
       return;
     }
 
+    // update the money and stats affected by purchase
+    const newMoney = currStats.money - product.price;
+    const newStat = currStats[product.item] + product.qty;
+
+    // updating stats after purchase
+    this.store.updateStats({
+      ...currStats,
+      money: newMoney,
+      [product.item]: newStat,
+    });
+
     // puchased item message
     const newStatMsg: IMessage = generateMessage(
       currStats.day,
@@ -110,36 +123,12 @@ export class GameView {
     );
     this.store.addMessages([newStatMsg]);
 
-    // update the money and stats affected by purchase
-    const newMoney = currStats.money - product.price;
-    const newStat = currStats[product.item] + product.qty;
+    // purchase probably affects weight & capacity, see if anything needs to be dropped
+    const weightUpdate = this.updateWeight();
 
-    // oxen and crew affect capacity, recalculate capacity if necessary
-    const newCapacity = calculateCapacity(
-      product.item === 'oxen' ? newStat : currStats.oxen,
-      product.item === 'crew' ? newStat : currStats.crew
-    );
-
-    // food and firepower affect weight, recalculate weight if necessary
-    const newWeight = calculateWeight(
-      product.item === 'food' ? newStat : currStats.food,
-      product.item === 'firepower' ? newStat : currStats.firepower
-    );
-
-    // update weight, discard if purchase goes above available weight
-    const weightUpdate = updateWeight(
-      currStats.day,
-      product.item === 'firepower' ? newStat : currStats.firepower,
-      product.item === 'food' ? newStat : currStats.food,
-      newCapacity,
-      newWeight
-    );
-
-    // update stats
+    // update weight stats
     this.store.updateStats({
-      ...currStats,
-      money: newMoney,
-      [product.item]: newStat,
+      ...this.store.stats(),
       firepower: weightUpdate.firepower,
       food: weightUpdate.food,
     });
@@ -246,7 +235,7 @@ export class GameView {
       // all were killed fleeing message
       const allKilledMsg: IMessage = generateMessage(
         currStats.day,
-        'Everybody died in the running away',
+        'Everybody died running away',
         DEATH_MESSAGE
       );
       this.store.addMessages([allKilledMsg]);
@@ -277,7 +266,9 @@ export class GameView {
     this.store.setEvent('');
   }
 
-  /* step, the game loop */
+  /**
+   *  step - the game loop
+   */
   step(timestamp: number) {
     //starting, setup the previous time for the first time
     if (!this.previousTime) {
@@ -298,7 +289,9 @@ export class GameView {
     if (this.store.isGameActive()) window.requestAnimationFrame(this.step.bind(this));
   }
 
-  /* updateGame */
+  /**
+   *  updateGame
+   */
   updateGame() {
     const currStats: IStats = this.store.stats();
     const currCapacity: number = this.store.capacity();
@@ -328,24 +321,18 @@ export class GameView {
     }
 
     // update weight
-    const weightUpdate = updateWeight(
-      newDay,
-      currStats.firepower,
-      newFood,
-      currCapacity,
-      currWeight
-    );
-
-    // if messages added in updating weight (dropping items), add messages
-    if (weightUpdate.messages.length > 0) this.store.addMessages(weightUpdate.messages);
+    const weightUpdate = this.updateWeight();
 
     // update distance
-    const newDistance = updateDistance(currStats.distance, currCapacity, weightUpdate.weight);
+    const newDistance = updateDistance(
+      this.store.stats().distance,
+      this.store.capacity(),
+      weightUpdate.weight
+    );
 
     // update stats - distance, firepower, food
     this.store.updateStats({
-      ...currStats,
-      day: newDay,
+      ...this.store.stats(),
       distance: newDistance,
       firepower: weightUpdate.firepower,
       food: weightUpdate.food,
@@ -386,7 +373,63 @@ export class GameView {
     }
   }
 
-  /* generateEvent */
+  /**
+   *  updateWeight
+   */
+  updateWeight() {
+    const currStats: IStats = this.store.stats();
+    const currCapacity: number = this.store.capacity();
+
+    let currWeight: number = this.store.weight();
+    let newFood: number = currStats.food;
+    let newFirepower: number = currStats.firepower;
+    let droppedGuns: number = 0;
+    let droppedFood: number = 0;
+
+    // drop things if it's too much weight, assume guns before food
+
+    // check if dropping guns
+    while (newFirepower && currCapacity <= currWeight) {
+      newFirepower--;
+      currWeight -= FIREPOWER_WEIGHT;
+      droppedGuns++;
+    }
+
+    // add notification if guns dropped
+    if (droppedGuns > 0) {
+      // dropped gun message
+      const droppedGunMsg: IMessage = generateMessage(
+        currStats.day,
+        `Left ${droppedGuns} guns behind`,
+        NEGATIVE_MESSAGE
+      );
+      this.store.addMessages([droppedGunMsg]);
+    }
+
+    // check if dropping food
+    while (newFood && currCapacity <= currWeight) {
+      newFood--;
+      currWeight -= FOOD_WEIGHT;
+      droppedFood++;
+    }
+
+    // add notification if food dropped
+    if (droppedFood > 0) {
+      // dropped food message
+      const droppedFoodMsg: IMessage = generateMessage(
+        currStats.day,
+        `Left ${droppedFood} food provisions behind`,
+        NEGATIVE_MESSAGE
+      );
+
+      this.store.addMessages([droppedFoodMsg]);
+    }
+    return { food: newFood, firepower: newFirepower, weight: currWeight };
+  }
+
+  /**
+   *  generateEvent
+   */
   generateEvent() {
     const currStats: IStats = this.store.stats();
 
@@ -453,7 +496,6 @@ export class GameView {
           eventData.text,
           eventData.notification
         );
-
         this.store.addMessages([attackMsg]);
 
         // set bandit stats

@@ -1,5 +1,5 @@
 <ul class="ml-12 mb-auto py-4">
-  @for (item of store.messages(); track item.id){
+  @for (item of store.messages(); track item.id; let idx = $index){
   <li
     class="text-xl mb-2"
     [class.text-black]="item.type === notificationTypes.death"
@@ -7,8 +7,11 @@
     [class.text-slate-400]="item.type === notificationTypes.neutral"
     [class.text-red-600]="item.type === notificationTypes.negative"
     [class.text-emerald-600]="item.type === notificationTypes.positive"
+    [class.opacity-50]="greaterThan(idx, 2)"
   >
-    Day {{ item.currentDay }}: {{ item.message }}
+    <!-- <span class="text-black" *ngIf="idx === 0">-> </span> -->
+    Day {{ item.currentDay }}:
+    {{ item.message }}
   </li>
   }
 </ul>

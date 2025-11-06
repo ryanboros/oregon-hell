@@ -26,8 +26,8 @@ export const MockBanditStats: IBanditStats = {
 export const MockMessage: string = 'Lorem ipsum dolor sit amet';
 
 export const MockProducts: IProduct[] = [
-  { item: FOOD_ITEM, qty: 20, price: 50 },
-  { item: OXEN_ITEM, qty: 1, price: 200 },
-  { item: FIREPOWER_ITEM, qty: 2, price: 50 },
-  { item: CREW_ITEM, qty: 5, price: 80 },
+  { id: '1', item: FOOD_ITEM, qty: 20, price: 50 },
+  { id: '2', item: OXEN_ITEM, qty: 1, price: 200 },
+  { id: '3', item: FIREPOWER_ITEM, qty: 2, price: 50 },
+  { id: '4', item: CREW_ITEM, qty: 5, price: 80 },
 ];

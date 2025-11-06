@@ -10,7 +10,7 @@ import {
   WEIGHT_PER_PERSON,
 } from '../lib/game.constants';
 
-const initialState: IGameState = {
+export const initialState: IGameState = {
   banditStats: {
     firepower: 0,
     money: 0,

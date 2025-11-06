@@ -17,4 +17,8 @@ export class GameEvents {
   }
 
   store = inject(GameStore);
+
+  public greaterThan(sub: number, num: number) {
+    return sub > num;
+  }
 }
