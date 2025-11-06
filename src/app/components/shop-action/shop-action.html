@@ -1,5 +1,5 @@
 <h5 class="mb-6 text-lg text-center">Trading Post</h5>
-<div class="grid grid-cols-2 gap-4 mb-4">
+<div class="grid grid-cols-2 gap-4 mb-6">
   @for ( item of store.shopInventory(); track item.id; let idx = $index ) {
   <button attr.data-testid="purchase-button-{{ idx }}" class="btn" (click)="emitPurchaseItem(item)">
     <div>{{ item.item | uppercase }}</div>
