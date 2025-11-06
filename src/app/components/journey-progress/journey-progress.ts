@@ -7,7 +7,7 @@ import { GameStore } from '../../store/game.store';
   selector: 'journey-progress',
   standalone: true,
   imports: [CommonModule],
-  styles: [],
+  styleUrls: ['./journey-progress.css'],
   templateUrl: './journey-progress.html',
 })
 export class JourneyProgress {

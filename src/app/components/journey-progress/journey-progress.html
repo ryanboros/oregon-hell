@@ -1,10 +1,3 @@
 <div class="w-full bg-[url('/images/forest-tree.svg')] h-24">
-  <input
-    class="w-full mt-4 appearance-none bg-transparent [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:bg-[url('/images/wagon.svg')] [&::-webkit-slider-thumb]:h-18 [&::-webkit-slider-thumb]:w-18 [&::-webkit-slider-thumb]:bg-contain [&::-webkit-slider-thumb]:bg-center [&::-webkit-slider-thumb]:bg-no-repeat [&::-webkit-slider-thumb]:"
-    disabled
-    min="0"
-    max="100"
-    type="range"
-    [value]="store.progress()"
-  />
+  <input class="w-full mt-4" disabled min="0" max="100" type="range" [value]="store.progress()" />
 </div>
