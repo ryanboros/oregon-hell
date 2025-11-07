@@ -24,6 +24,7 @@ describe('StartGame component', () => {
 
   it('should render Start Game button', () => {
     const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('h5')?.textContent).toContain('Begin your journey');
     expect(compiled.querySelector('button')?.textContent).toContain('Start Game');
   });
 

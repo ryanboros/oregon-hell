@@ -4,12 +4,12 @@ import { By } from '@angular/platform-browser';
 
 import { ShopAction } from './shop-action';
 import { GameStore } from '../../store/game.store';
-import { MockProducts } from '../../lib/game.mock';
+import { MockProducts, MockStats } from '../../lib/game.mock';
 
 describe('Shop Action component', () => {
   let component: ShopAction;
   let fixture: ComponentFixture<ShopAction>;
-  let gameStore = { shopInventory: signal(MockProducts) };
+  let gameStore = { shopInventory: signal(MockProducts), stats: signal(MockStats) };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

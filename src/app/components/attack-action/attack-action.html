@@ -1,8 +1,10 @@
 <h5 class="mb-4 text-lg text-center">Bandits attack</h5>
 <p class="mb-4 text-center">Firepower: {{ store.banditStats().firepower! }}</p>
 <div class="flex flex-row justify-evenly w-auto">
-  <button data-testid="fight-button" class="btn btn-primary mr-8" (click)="emitFight()">
+  <button data-testid="fight-button" class="btn btn-error text-white mr-8" (click)="emitFight()">
     Fight
   </button>
-  <button data-testid="run-button" class="btn" (click)="emitRunAway()">Run Away</button>
+  <button data-testid="run-button" class="btn btn-soft btn-default" (click)="emitRunAway()">
+    Run Away
+  </button>
 </div>
